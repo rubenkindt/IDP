@@ -1,0 +1,39 @@
+/* Ruben Kindt
+ * dietfunc.idp
+ *
+ */
+
+vocabulary V {
+	type Cijfer isa int
+	type Letter constructed from {L, E, S, F, O, D, I, T}
+	
+	Waarde(Letter): Cijfer
+	
+
+} 
+
+structure S : V {
+	//Letter= {L; E; S; F; O; D; I; T}
+	Cijfer = {0 .. 9}
+}
+
+theory T : V {
+	// Elke letter stelt een verschillend Cijfer voor	
+	!letter[Letter]: !letter2[Letter]: (letter~= letter2) => Waarde(letter) ~= Waarde(letter2). 
+	
+	Waarde(L)*1000 + Waarde(E)*100 + Waarde(S)*10 + Waarde(S)   +   Waarde(F)*1000 + Waarde(O)*100 + Waarde(O)*10 + Waarde(D) = Waarde(D)*1000 + Waarde(I)*100 + Waarde(E)*10 + Waarde(T). 
+	Waarde(L) ~=0.
+	Waarde(F) ~=0.
+	Waarde(D )~=0.
+	
+	Waarde(E)=6.
+	Waarde(S)=2.
+	Waarde(F)=1.
+	Waarde(T)=9.
+	
+}
+
+procedure main() {	
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T, S))	
+}

@@ -1,0 +1,40 @@
+/* Ruben Kindt 
+ * geslaagd.idp
+ *
+ */
+ 
+vocabulary V {
+    type Vak
+    type Score isa nat
+    ExamenResultaat(Vak): Score
+    Geslaagd(Vak)
+    Getolereerd(Vak)
+    
+} 
+
+structure S : V {
+    Vak = { ArtificieleInt; EmbeddedDinges; ProductCert; }
+    Score = { 0 .. 20 }
+    ExamenResultaat = { ArtificieleInt -> 12; EmbeddedDinges -> 17; ProductCert -> 8; }
+}
+
+theory T : V {
+	
+	!vak: Geslaagd(vak) <=> (ExamenResultaat(vak)>=10) | Getolereerd(vak).
+    !vak: Getolereerd(vak) <=>(ExamenResultaat(vak)>=8 & ExamenResultaat(vak)<10).    
+    
+    
+}
+
+theory T2 : V {
+	{
+    	!v: Geslaagd(v) <- (ExamenResultaat(v)>=10). 
+        !vak: Getolereerd(vak) <- ExamenResultaat(vak)>=8 & ExamenResultaat(vak)<10. 
+    	!vak: Geslaagd(vak) <- Getolereerd(vak).
+    }
+}
+
+procedure main() {
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T2,S))
+}

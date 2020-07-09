@@ -1,0 +1,56 @@
+vocabulary V{
+	r
+	p	
+	q
+}
+
+structure S: V {
+	p = true
+	q = true
+	r = false
+}
+
+theory T1: V {
+	p=>q.
+}
+
+theory T2: V {
+	r=>q.
+}
+
+theory T3: V {
+	p=>r.
+}
+
+theory T4: V {
+	p<=>q.
+}
+
+theory T5: V {
+	p<=>r.
+}
+
+theory T6: V {
+	(p&q)=>(p|r).
+}
+
+theory T7: V {
+	(p|q)=>(p&r).
+}
+
+theory T8: V {
+	(p=>q)=>(p<=r).
+}
+
+
+procedure main() {
+	print("1,p=>q",sat(T1, S))
+	print("2,r=>q",sat(T2, S))
+	print("3,p=>r",sat(T3, S))
+	print("4,p<=>q",sat(T4, S))
+	print("5,p<=>r",sat(T5, S))
+	print("6,(p&q)=>(p|r)",sat(T6, S))
+	print("7,(p|q)=>(p&r)",sat(T7, S))
+	print("8,(p=>q)=>(p<=r)",sat(T8, S))
+}
+

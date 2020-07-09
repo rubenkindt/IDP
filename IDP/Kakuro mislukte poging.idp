@@ -1,0 +1,51 @@
+/* Ruben Kindt 
+ * Kakuro.idp
+ *
+ */
+
+vocabulary V {
+	type Getal isa nat
+    type Rij isa nat
+    type Kolom isa nat
+    type Som isa nat
+    
+	GegevenR(Rij, Som)
+    GegevenK(Kolom, Som)
+    
+    Oplossing(Rij, Kolom,Getal)
+    Vakje(Rij, Kolom)
+}
+
+structure S : V {
+	Rij   = {1..4}
+    Kolom = {1..4}
+    Getal = {1..9}
+	//Som   = {0..45} 
+
+    GegevenK = { 1,4; 2,9; 3,21; 4,16 }
+    GegevenR = { 1,4; 2,7; 3,23; 4,16 }
+    
+    Vakje = {   1,1; 1,2; 
+        		2,1; 2,2; 2,3;
+        			 3,2; 3,3; 3,4;
+        	   			  4,3; 4,4; }
+}
+
+theory T : V {
+    //op elke rij mag een getal maar 1 keer voorkomen
+	//! R,R2,K: R~=R2 => (Oplossing(R,K) ~= Oplossing(R2,K)).
+    
+    //op elke kolom mag een getal maar 1 keer voorkomen
+    //! R,K,K2: K~=K2 => Oplossing(R,K) ~= Oplossing(R,K2).
+    
+    ! (R,K) in Vakje:  ?g: Oplossing(R,K,g).
+    
+    //We alle mogelijke vakjes worden ingevuld 
+    //Terwijl we enkel de voorgedefineerde vakjes ingevuld willen hebben 
+     
+}
+
+procedure main() {
+    stdoptions.nbmodels = 1
+    printmodels(modelexpand(T,S))
+}

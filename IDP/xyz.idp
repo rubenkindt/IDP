@@ -1,0 +1,34 @@
+vocabulary V{
+	x
+	y	
+	z
+}
+
+structure S1: V {
+	x = true
+	y = true
+	z = false
+}
+
+structure S2: V {
+	x = false
+	y = true
+	z = false
+}
+
+structure S3: V {
+	x = true
+	y = true
+	z = true
+}
+
+theory T: V {
+	z&(x&~y|~x&y)|(~z&x&y).
+}
+
+procedure main() {
+	print("1,should be true",sat(T, S1))
+	print("2,should be false",sat(T, S2))
+	print("3,should be false",sat(T, S3))
+}
+

@@ -1,0 +1,22 @@
+// Ruben Kindt
+vocabulary V{
+	r
+	p	
+	q
+}
+
+structure S: V {
+	r = false
+}
+
+
+theory T8: V {
+	(p=>q)=>(p<=r).
+}
+
+
+procedure main() {
+	stdoptions.nbmodels = 4
+	printmodels(modelexpand(T8, S))
+}
+

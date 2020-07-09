@@ -1,0 +1,87 @@
+/*  Birte De Smedt
+ * kakuro.idp
+ */
+
+vocabulary V {
+    type Getal     isa nat
+    type Som     isa nat
+    type Rij    isa nat
+       type Kolom    isa nat
+    type Aantal isa nat
+    GegevenR(Rij,Som)
+    GegevenK(Kolom, Som)
+    AantRij(Rij): Aantal
+    AantKolom(Kolom): Aantal
+    SpatiesRij(Rij): Aantal
+    SpatiesKolom(Kolom): Aantal
+    Vakje(Rij,Kolom)
+    Oplossing(Rij,Kolom): Getal
+
+} 
+
+structure S : V {
+    Getal = {1..9}
+    //Som = {1..23}
+    Rij = {1..4}
+    Kolom = {1..4}
+    Aantal = {0..3}
+    GegevenR = {
+        1,4;     2,7;
+        3,23;    4,16
+    }
+    GegevenK = {
+        1,4;        2,9; 
+        3,21;     4,16
+    }
+    AantRij ={
+        1-> 2;
+        2 -> 3;
+        3 -> 3;
+        4 -> 2;
+    }
+    SpatiesRij ={
+        1-> 0;
+        2 -> 0;
+        3 -> 1;
+        4 -> 2;
+    }
+    AantKolom ={
+        1-> 2;
+        2 -> 3;
+        3 -> 3;
+        4 -> 2;
+    }
+     SpatiesKolom ={
+        1-> 0;
+        2 -> 0;
+        3 -> 1;
+        4 -> 2;
+    }
+    /*Vakje = {
+        1,1;    1,2;
+        2,1;    2,2;    2,3;
+        3,2;    3,3;    3,4;
+        4,3;    4,4
+    }*/
+
+}
+
+theory T : V {
+      //!r,k: !g: (r>0 | r<AantRij(r)) & (k>0 | k<AantKol(k)) => Oplossing(r,k) = g.
+    {
+        !r,k: Vakje(r,k) <- (k>SpatiesRij(r) & (SpatiesRij(r)+AantRij(r))>=k) & (r>SpatiesKolom(k) & (SpatiesKolom(k)+AantKolom(k))>=r).
+
+    }
+    //!r k: Vakje(r,k) <- (AantKol(k)> r+SpatiesKolom(k)) & (AantRij(r)> k+SpatiesRij(r)).
+    //!r,k: (r>0 | r<AantRij(r)) & (k>0 | k<AantKol(k)) => Vakje(r,k).
+
+    //!r,k: ?g: Vakje(r,k) => Oplossing(r,k) = g.
+
+    //! R,R2,K: Oplossing(R,K) ~= Oplossing(R2,K).
+
+}
+
+procedure main() {
+    stdoptions.nbmodels = 10
+    printmodels(modelexpand(T,S))
+}

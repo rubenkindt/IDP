@@ -1,0 +1,66 @@
+/* Ruben Kindt
+ * circuit.idp
+ *
+ */
+
+vocabulary CircVoc {
+  type Wire
+  type Gate
+  type Test
+  Output(Gate):Wire
+  FirstInput(Gate):Wire
+  SecondInput(Gate):Wire
+  type Or isa Gate
+  type And isa Gate
+  type Xor isa Gate
+  On(Wire)
+  InputWire(Wire)
+  InputWireOn(Wire, Test)
+  OutputWire(Wire)
+  OutputWireOn(Wire)
+  ObservedOn(Wire, Test)
+  ObservedOff(Wire, Test)
+  Broken(Gate,Test)
+
+}
+
+structure Circuit : CircVoc {
+    Test = {1; 2 ;3}
+    Wire = { K; L; M; N; O; P; Q; R; }
+    Gate = { A; B; C; D; E; }
+    Output = { A -> N; B -> P; C -> O; D -> Q; E -> R; }
+    FirstInput = { A -> K; B -> N; C -> L; D -> M; E -> Q; }
+    SecondInput = { A -> L; B -> M; C -> K; D -> N; E -> O; }
+    Xor = { A; B; }
+    And = { C; D; }
+    Or = { E; }
+    //On={ K; M;}
+    InputWire = {K; L; M;}
+    OutputWire = {P; R;}
+    InputWireOn = {K, 1; L, 2; M, 3}
+    OutputWireOn = {P; R}
+    ObservedOn= {P, 1; R,1 ;P,2; R,2; P,3}
+    ObservedOff= {R,3}
+}
+
+theory CircTh : CircVoc {
+  !draad,test: (ObservedOn(draad, test) => On(draad)).
+  !draad,test: (ObservedOff(draad, test) => ~On(draad)).
+
+  !draad: InputWire(draad) => (InputWireOn(draad) <=> On(draad)).
+  //!draad: InputWire(draad) => (InputWireOn(draad) <=> On(draad)).
+  !x,test: And(x)& ~Broken(x,test) => (On(FirstInput(x),test) & On(SecondInput(x),test) <=> On(Output(x),test)).
+  !x,test: Or(x) & ~Broken(x,test) => (On(FirstInput(x),test) | On(SecondInput(x),test) <=> On(Output(x),test)).
+  !x,test: Xor(x) & ~Broken(x,test) => (((~On(FirstInput(x),test) & On(SecondInput(x),test)) | (On(FirstInput(x),test) & ~On(SecondInput(x),test))) <=> On(Output(x),test)).
+
+}
+term NbBroken : CircVoc{
+    #{gate[Gate]: Broken(gate)}
+
+}
+
+procedure main() {
+    stdoptions.nbmodels = 10
+	printmodels(minimize(CircTh,Circuit,NbBroken))
+
+}

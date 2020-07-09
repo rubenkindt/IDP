@@ -1,0 +1,26 @@
+/*  ruben kindt
+ * grafe.idp
+ *
+ */
+ 
+vocabulary V {
+    type Knoop
+    Boog(Knoop, Knoop)
+    Bereikbaarheid(Knoop, Knoop)
+}
+
+structure S : V {
+    Knoop = { A; B; C; D; E; }
+    Boog = { A,B ; A,C ; B,E ; C,D ; C,E ; D,E ; E,B; }
+}
+
+Theory T : V {
+   {
+    	! x,y: Bereikbaarheid(x,y) <- Boog(x,y).
+    	! x,y,z: Bereikbaarheid(x,z) <- Bereikbaarheid(x, y) & Bereikbaarheid(y,z) & x ~= z.
+   }
+}
+
+procedure main(){
+    printmodels(modelexpand(T,S))
+}

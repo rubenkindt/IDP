@@ -1,0 +1,46 @@
+/* Ruben Kindt
+ * mapopt.idp
+ *
+ */
+
+vocabulary V {
+
+	type Kleur
+	type Land
+	Grens(Land, Land)
+	ToegekendeKleur(Land): Kleur
+}
+
+include "europa.idp"
+
+
+structure S : V {
+	Kleur = { Rood; Oranje; Geel; Groen; Blauw }
+	Land = { Belgie; Nederland; Duitsland; Luxemburg; Frankrijk; Zwitserland; Oostenrijk }
+	Grens = {
+		(Nederland,Belgie); 	 (Nederland,Duitsland);  (Belgie,Frankrijk);
+		(Belgie,Luxemburg); 	 (Belgie,Duitsland); 	 (Luxemburg,Frankrijk);
+		(Luxemburg, Duitsland);  (Frankrijk,Duitsland);  (Frankrijk,Zwitserland);
+		(Duitsland,Zwitserland); (Duitsland,Oostenrijk); (Zwitserland,Oostenrijk);
+    }
+
+}
+
+theory T : V {
+	//!land[Land]: !land2[Land]: (Grens(land, land2) ) => ?kleur[Kleur]: ToegekendeKleur(land, kleur) & ~ToegekendeKleur(land2,kleur).
+
+	!land[Land]: !land2[Land]: (Grens(land, land2) ) => ToegekendeKleur(land) ~= ToegekendeKleur(land2).
+
+	//!land[Land]: ?kleur[Kleur]: ToegekendeKleur(land, kleur).
+	//!kleur[Kleur]: !kleur2[Kleur]: !land[Land]: (ToegekendeKleur(land, kleur) & ToegekendeKleur(land, kleur2)) => kleur=kleur2.
+
+}
+term t: V {
+  #{ kleur[Kleur]: ?land: ToegekendeKleur(land)=kleur }
+}
+
+
+procedure main() {
+    stdoptions.nbmodels = 6
+    printmodels(minimize(T,S_euro,t))
+}

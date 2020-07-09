@@ -1,0 +1,42 @@
+/* Ruben Kindt
+ * circuit.idp
+ *
+ */
+
+vocabulary CircVoc {
+  type Wire
+  type Gate
+  Output(Gate):Wire
+  FirstInput(Gate):Wire
+  SecondInput(Gate):Wire
+  type Or isa Gate
+  type And isa Gate
+  type Xor isa Gate
+  On(Wire)
+
+}
+
+structure Circuit : CircVoc {
+    Wire = { K; L; M; N; O; P; Q; R; }
+    Gate = { A; B; C; D; E; }
+    Output = { A -> N; B -> P; C -> O; D -> Q; E -> R; }
+    FirstInput = { A -> K; B -> N; C -> L; D -> M; E -> Q; }
+    SecondInput = { A -> L; B -> M; C -> K; D -> N; E -> O; }
+    Xor = { A; B; }
+    And = { C; D; }
+    Or = { E; }
+    On={ K; M }
+}
+
+theory CircTh : CircVoc {
+
+  !x: And(x) => (On(FirstInput(x)) & On(SecondInput(x)) <=> On(Output(x))).
+  !x: Or(x)  => (On(FirstInput(x)) | On(SecondInput(x)) <=> On(Output(x))).
+  !x: Xor(x) => (((~On(FirstInput(x)) & On(SecondInput(x))) | (On(FirstInput(x)) & ~On(SecondInput(x)))) <=> On(Output(x))).
+
+}
+
+procedure main() {
+    stdoptions.nbmodels = 1
+    printmodels(modelexpand(CircTh, Circuit))
+}

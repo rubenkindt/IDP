@@ -1,0 +1,22 @@
+// Ruben Kindt
+vocabulary V{
+	type Dag
+	Kerstmis: Dag
+	Nieuwjaar: Dag
+}
+
+structure S: V {
+	Dag = {Maandag; Dinsdag; Woensdag; Donderdag; Vrijdag; Zaterdag; Zondag}
+	Kerstmis=Maandag
+}
+
+
+theory T8: V {
+
+}
+
+
+procedure main() {
+	printmodels(modelexpand(T8, S))
+}
+

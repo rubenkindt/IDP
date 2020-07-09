@@ -1,0 +1,50 @@
+/* Ruben Kindt
+ * cde.idp
+ *
+ */
+
+vocabulary V {
+	type Cijfer isa int
+	
+	even(Cijfer)
+	
+	A: Cijfer
+	B: Cijfer
+	C: Cijfer
+	D: Cijfer
+	E: Cijfer
+	I: Cijfer
+} 
+
+structure S : V {
+	//Letter= {L; E; S; F; O; D; I; T}
+	Cijfer = {0 .. 9}
+	even={0; 2; 4; 6; 8}
+	
+}
+
+theory T : V {
+	// Elke letter stelt een verschillend Cijfer voor
+	A ~= B & A ~= C & A ~= D & A ~= E & A ~= I & B ~= C & B ~= D 
+	& B ~= E & B ~= I & C ~= D & C ~= E & E ~= I.
+	
+	A*10 + I    +    B*10 + A   =   C*100 + D*10 + E. 
+	even(A).
+	even(E).
+	even(I).
+	~even(B).
+	~even(C).
+	~even(D).
+	
+	A ~=0.
+	B ~=0.
+	C ~=0.
+	
+	E=6.
+	
+}
+
+procedure main() {	
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T, S))	
+}

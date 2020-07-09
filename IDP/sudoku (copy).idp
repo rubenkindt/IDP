@@ -1,0 +1,55 @@
+/* Ruben Kindt 
+ * sudoku.idp
+ *
+ */
+
+vocabulary V {
+	type Rij isa nat
+    type Kolom isa nat
+    type Getal isa nat
+    Gegeven(Rij, Kolom, Getal)
+    Oplossing(Rij, Kolom):Getal
+    Vierkant(Rij, Kolom, Rij, Kolom)
+} 
+
+structure S : V {
+    Rij   = {0..9}
+    Kolom = {0..9}
+    Getal = {0..9}
+    
+    
+    Gegeven = {
+        1,2,2; 1,4,3; 
+        2,1,7; 2,2,1; 2,6,9; 2,7,3 ;
+        3,2,3; 3,3,4; 3,4,5; 3,8,7 ;
+        4,1,9; 4,4,6; 
+        5,2,4; 5,8,6;
+        6,6,4; 6,9,9; 
+        7,2,8; 7,6,6; 7,7,7; 7,8,4; 
+      	8,3,3; 8,4,4; 8,8,5; 8,9,8;
+        9,6,1; 9,8,9
+    }
+}
+
+theory T : V {
+	//{
+    //    !r,k,g: Oplossing(r,k)=g <- Gegeven(r,k,g). 
+    //		dit gaf geen resultaten waarom?    
+    //}
+    !r,k,g: Gegeven(r,k,g) => Oplossing(r,k) = g.
+    // deze gaf dan weer wel resultaten
+    
+    {!r1, k1, r2, k2: Vierkant(r1, k1, r2, k2) <- (r1 ~= r2 | k1 ~= k2) & 
+        r1 - (r1-1)%3 = r2 - (r2-1)%3 & k1 - (k1-1)%3 = k2 - (k2-1)%3.
+    }
+    
+    !r,g: ?k: Oplossing(r,k) = g.
+    !k,g: ?r: Oplossing(r,k) = g.
+    !k1,k2,r1,r2: Vierkant(r1, k1, r2, k2) =>  Oplossing(r2,k2) ~= Oplossing(r1,k1).
+    
+}
+
+procedure main() {
+    stdoptions.nbmodels = 1		
+    printmodels(modelexpand(T,S))
+}	
